@@ -17,6 +17,7 @@ class CreateGamePointsTable extends Migration
             $table->id();
             $table->integer('firstPlayer')->default(0);
             $table->integer('secondPlayer')->default(0);
+            $table->string('areaId', 100)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -17,8 +17,15 @@
    <style>
       .game tr td { border: 1px solid blue; }
       .box{ width: 40px; height: 40px; text-align: center; }
-      .fa-solid{ padding-top: 5px; }
-      .id_2_2{ background-color:green !important; }
+      .fa-2x{ padding-top: 5px; }
+
+      @foreach($GamePoints as $disable)
+         .{{$disable->areaId}}{pointer-events: none;}
+      @endforeach
+
+      /* Right side */
+      .col-4 tr td:first-child, .col-4 tr th{background-color: #17a2b8!important; color: #fff !important; padding: 0px !important;}
+      .col-4 tr td:nth-child(2), .col-4 tr td:nth-child(3){background-color: #1abc9c!important; color: #fff; padding: 0px !important;}
    </style>
 
    <div class="row justify-content-center">
@@ -42,28 +49,25 @@
                         @for($i = 1; $i <= $rowCol; $i++)
                            <tr>
                               @for($j = 1; $j <= $rowCol; $j++)                       
-                              <td>
-                                 @php
-                                    echo $id = 'id_'.$i.'_'.$j;
-                                 @endphp
-                                 <a href="{{ Route('gameAction', $id)}}">
-                                    <div class="box id_{{$i.'_'.$j}}">
-                                       {{-- id_{{$i.'_'.$j}} --}}
-                                    <i class="fa-solid fa-circle-xmark fa-2x"></i>
-                                    </div>    
-                                    {{-- <i class="fa-solid fa-check fa-2x"></i> --}}
-                                 </a>
-                              </td>
+                                 <td>                                    
+                                    @php $areaId = 'c'.$i.'-r'.$j; @endphp
+                                    <a class="{{$areaId}}" href="{{ Route('gameAction', $areaId)}}">
+                                       <div class="box">
+                                          @foreach($GamePoints as $areaPrint)
+                                             @if($areaPrint->firstPlayer==1 && $areaPrint->areaId==$areaId)                                               
+                                                <i class="fa-solid fa-xmark fa-2x"></i>
+                                             @elseif($areaPrint->secondPlayer==1 && $areaPrint->areaId==$areaId)
+                                                <i class="fa-regular fa-circle fa-2x"></i>                                                
+                                             @endif   
+                                          @endforeach
+                                       </div>    
+                                    </a>
+                                 </td>
                               @endfor
                            </tr>
                         @endfor
                      </table>
-                  </div>
-
-                  <style>
-                       .col-4 tr td:first-child, .col-4 tr th{background-color: #17a2b8!important; color: #fff !important; padding: 5px !important;}
-                       .col-4 tr td:nth-child(2), .col-4 tr td:nth-child(3){background-color: #1abc9c!important; color: #fff; padding: 5px !important;}
-                  </style>
+                  </div>                 
 
                   <div class="col-4">
                      <table class="table table-bordered text-center">
@@ -82,11 +86,14 @@
                                  <td>{{$point->secondPlayer}}</td>
                               </tr>
                            @endforeach
-
+                           @php
+                              $fP = $GamePoints->sum('firstPlayer');
+                              $sP = $GamePoints->sum('secondPlayer');
+                           @endphp
                            <tr>
                               <td><b>Sum :</b></td>
-                              <td><b>{{$GamePoints->sum('firstPlayer')}}</b></td>
-                              <td><b>{{$GamePoints->sum('secondPlayer')}}</b></td>
+                              <td><b>{{$fP}}{{($fP>$sP)?'[win]':''}}</b></td>
+                              <td><b>{{$sP}}{{($fP<$sP)?'[win]':''}}</b></td>
                            </tr>
                         </tbody>
                      </table>
@@ -98,6 +105,7 @@
    </div>
 </div>
 @endsection
+
 <div class="modal fade" id="gameEntry" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
       <div class="modal-content">

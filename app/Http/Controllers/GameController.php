@@ -59,11 +59,13 @@ class GameController extends Controller {
         $pointTo = GameStep::where('action', 1)->first();
         if($pointTo->id==1){
             GamePoint::create([
-                'firstPlayer'=>true
+                'firstPlayer'=>true,
+                'areaId' => $id
             ]);  
         }else{
             GamePoint::create([
-                'secondPlayer'=>true
+                'secondPlayer'=>true,
+                'areaId' => $id
             ]);  
         } 
 
